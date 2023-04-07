@@ -1,3 +1,5 @@
+from entidades.Item import Item
+
 class Agente:
     def __init__(self) -> None:
         self.y = 0
@@ -17,7 +19,7 @@ class Agente:
     def deslocarBaixo(self) -> None:
         self.y = self.y + 1
 
-    def coletar(self, item) -> None:
+    def coletar(self, item: Item) -> None:
         self.carregado = True
         self.item = item
         
@@ -37,13 +39,13 @@ class Agente:
     def getEstado(self) -> str:
         return self.carregado
     
-    def getItem(self):
+    def getItem(self) -> Item:
         return self.item
     
     # SETTERS
     
-    def setX(self, x) -> None:
+    def setX(self, x: int) -> None:
         self.y = x
 
-    def setY(self, y) -> None:
+    def setY(self, y: int) -> None:
         self.x = y

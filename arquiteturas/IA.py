@@ -1,13 +1,10 @@
 import random
+from entidades.Agente import Agente
 
 class IA:
-    def __init__(self, agente):
+    def __init__(self, agente: Agente):
         # Instância do agente
         self.agente = agente
-        
-        # Guarda as cordenadas do deslocamento anterior
-        self.yAnterior = 0
-        self.xAnterior = 0
         
         self.itemEncontrado = ''
         self.itemCarregado = ''
@@ -21,6 +18,9 @@ class IA:
         # Guarda na memória do agente as cordenadas em que o item foi coletado
         self.xItemColetado = 0
         self.yItemColetado = 0
+        
+        # Guarda o item coletado
+        self.itemAtual = None
         
     # COMPORTAMENTOS DO AGENTE
     
@@ -56,7 +56,10 @@ class IA:
                 self.agente.deslocarBaixo()
             self.sentidoX = 'direita'
 
-    def deslocarAteCordenadas(self, x, y) -> None:
+    def deslocarAteCordenadas(self, x: int, y: int) -> None:
+        """
+        Método para deslocar o agente até uma determinada cordenada x, y
+        """
         # Antes de realizar um deslocamento o programa armazena as cordenadas anteriores do agente
         self.armazenarCordenadasAnteriores()
         
@@ -69,20 +72,9 @@ class IA:
         elif self.agente.getX() > y:
             self.agente.deslocarCima()
             
-    #SENSORES DO AGENTE
-    """
-    def percepcaoLimitesDoMapa(self, x, y) -> bool:
-        
-        Verifica se o agente está dentro dos limites do mapa
-       
-        if (x > 19 or x < 0 or y > 19 or y < 0):
-            # Se o a gente ultrapassou os limites do mapa ele volta para a cordenada anterior
-            self.retornarParaCordenadaAnterior()
-            return True
-        else:
-            return False
-    """ 
-    def percepcaoItem(self, cordenadas) -> bool:
+    # SENSORES DO AGENTE
+    
+    def percepcaoItem(self, cordenadas: dict) -> bool:
         """
         Verifica se o agente encontrou algum item
         """
@@ -96,7 +88,7 @@ class IA:
                 
         self.itemEncontrado = ''
         
-    def percepcaoLixo(self, cordenadas) -> bool:
+    def percepcaoLixo(self, cordenadas: dict) -> bool:
         """
         Verifica se o agente encontrou o lixo
         """
@@ -113,42 +105,24 @@ class IA:
     def armazenarCordenadasAnteriores(self) -> None:
         self.xAnterior = self.agente.getX()
         self.yAnterior = self.agente.getY()
-        
-    def armazenarCordenadasItemColetado(self, x, y) -> None:
-        self.xItemColetado = x
-        self.yItemColetado = y
-        
-    def retornarParaCordenadaAnterior(self) -> None:
-        xAtual = self.agente.getX()
-        yAtual = self.agente.getY()
-        
-        # Verifica a diferença da cordenada atual com a cordenada anterior para determinar em qual eixo se deu o deslocamento
-        if(self.xAnterior != xAtual):
-            # Se o deslocamento se deu no eixo x o agente retorna para a cordenada x anterior
-            self.agente.setX(self.xAnterior)
-        elif(self.yAnterior != yAtual):
-            # Se o deslocamento se deu no eixo y o agente retorna para a cordenada y anterior
-            self.agente.setY(self.yAnterior)
-    
-    def analisarItem(self, itens) -> None:
+
+    def analisarItem(self, itens: list) -> None:
         """
         Verifica se o objeto sobre o qual o agente está é um item, caso sim, coleta-o
         """
-        itemAtual = None
-        
+    
         # Buscar objeto item com o rótulo armazenado
         for item in itens:
             if item.getRotulo() == self.itemEncontrado:
-                itemAtual = item
+                self.itemAtual = item
         
         # Caso o agente não estiver carregando algo
         if self.agente.getEstado() == False:
             self.itemCarregado = self.itemEncontrado
-            self.agente.coletar(itemAtual)
-            self.armazenarCordenadasItemColetado(itemAtual.getX(), itemAtual.getY())
+            self.agente.coletar(self.itemAtual)
             
             # Remove item da lista de itens no mapa após a coleta
-            itens.remove(itemAtual)
+            itens.remove(self.itemAtual)
             
     def verificarEstado(self) -> None:
         """
@@ -160,13 +134,15 @@ class IA:
             self.itensColetados.append(self.agente.getItem())
             self.itemCarregado = ''
         
-    def mapearDistancias(self, cordenadas) -> dict:
+    def mapearDistancias(self, cordenadas: dict) -> dict:
+        """
+        Calcula a distância do agente em relação a todos os itens do mapa
+        """
         x = self.agente.getX()
         y = self.agente.getY()
         
         distancias = {}
         
-        # Mapear a distancia de todos os itens em relação ao agente
         for cordenada in cordenadas:
             # Verifica se o objeto é um item
             if 'item' in cordenada:
@@ -181,7 +157,28 @@ class IA:
     def getItensColetados(self) -> list:
         return self.itensColetados
     
-    def getAgente(self):
+    def getItensReciclaveis(self) -> list:
+        itensReciclaveis = []
+        
+        for item in self.itensColetados:
+            if item.getPeso() == 5:
+                itensReciclaveis.append(item)
+                
+        return itensReciclaveis
+    
+    def getItensOrganicos(self) -> list:
+        itensOrganicos = []
+        
+        for item in self.itensColetados:
+            if item.getPeso() == 1:
+                itensOrganicos.append(item)
+                
+        return itensOrganicos
+
+    def getCordenadasItemColetado(self) -> int:
+        return self.xItemColetado, self.yItemColetado
+    
+    def getAgente(self) -> Agente:
         return self.agente
     
     def getXAnterior(self) -> int:
@@ -189,7 +186,3 @@ class IA:
     
     def getYAnterior(self) -> int:
         return self.yAnterior
-    
-    def getCordenadasItemColetado(self) -> int:
-        return self.xItemColetado, self.yItemColetado
-    

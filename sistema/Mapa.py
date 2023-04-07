@@ -1,6 +1,7 @@
 import random
 import entidades.Item as item
 import copy
+from entidades.Agente import Agente
 
 class Mapa:
     def __init__(self) -> None:
@@ -15,7 +16,7 @@ class Mapa:
         # Inicializando dicionário para armazenar instâncias de itens
         self.itens = []
     
-    def atualizarCordenadas(self, agente) -> None:
+    def atualizarCordenadas(self, agente: Agente) -> None:
         """
         Atualiza as cordenadas de todos os objetos no dicionário
         """
@@ -30,7 +31,7 @@ class Mapa:
         for item in self.itens:
             self.cordenadas[f"{item.getRotulo()}"] = [item.getY(), item.getX(), item.getPeso()]
     
-    def verificarCordenada(self, x, y) -> bool:
+    def verificarCordenada(self, x: int, y: int) -> bool:
         """
         Verifica se a cordenada está disponível para ser ocupada
         """
@@ -48,7 +49,7 @@ class Mapa:
             else:
                 return False
 
-    def gerarItens(self, quantidade, peso) -> None:
+    def gerarItens(self, quantidade: int, peso: int) -> None:
         """
         Cria n itens com um determinado peso em cordenadas aleatórias
         """
@@ -93,12 +94,15 @@ class Mapa:
                         chaveEncontrada = chave
                         # Verifica o tipo de objeto
                         if (chave == 'agente'):  # Verifica se é tipo agente
-                            simbolo = '[A]'
+                            simbolo = ' ⛉ '
                         elif ('item' in chave):  # Verifica se é tipo item
                             peso = objetos[chave][2]
-                            simbolo = f'[{peso}]'
+                            if peso == 5:
+                                simbolo = ' ♻ '
+                            else:
+                                simbolo = ' ⛬ '
                         elif (chave == 'lixo'):  # Verifica se é tipo lixo
-                            simbolo = '[L]'
+                            simbolo = ' 🗑️ '
 
                     # Encerra o loop do dicionário ao encontrar as cordenadas correspondentes do objeto
                     if (objetoEncontrado == True):
@@ -120,10 +124,10 @@ class Mapa:
         
     # SETTERS        
 
-    def setCordenadasLixo(self, x, y) -> None:
+    def setCordenadasLixo(self, x: int, y: int) -> None:
         self.xLixo = x
         self.yLixo = y
         
-    def setCordenadasAgente(self, agente, x, y) -> None:
+    def setCordenadasAgente(self, agente: Agente, x: int, y: int) -> None:
         agente.setX(x)
         agente.setY(y)

@@ -1,14 +1,16 @@
 from arquiteturas.IA import IA
+from entidades.Agente import Agente
 
 class Objetivo(IA):
-    def __init__(self, agente) -> None:
+    def __init__(self, agente: Agente) -> None:
         super().__init__(agente)
         
         self.localizarItemProximo = True
         self.xItemProximo = 0
         self.yItemProximo = 0
+        self.proximoAlvo = None
             
-    def executar(self, cordenadas, itens) -> None:
+    def executar(self, cordenadas: dict, itens: list) -> None:
         
         if self.agente.getEstado() == False and self.localizarItemProximo == True:
             # Verificar itens próximo
@@ -16,7 +18,9 @@ class Objetivo(IA):
             self.xItemProximo = cordenadas[item][1]
             self.yItemProximo = cordenadas[item][0]
             self.localizarItemProximo = False
+            self.proximoAlvo = [self.xItemProximo, self.yItemProximo]
         elif self.agente.getEstado() == False:
+            # Verifica se o agente está em cima do item escolhido para coletar
             if (self.percepcaoItem(cordenadas) and self.verificarPosicaoItemAgente()):
                 self.analisarItem(itens)
             self.deslocarAteCordenadas(self.xItemProximo, self.yItemProximo)
@@ -25,6 +29,7 @@ class Objetivo(IA):
             self.deslocarAteCordenadas(19, 19)
             self.localizarItemProximo = True
             
+            # Verifica se o agente está em cima do lixo, caso estiver, irá soltar o item
             if self.percepcaoLixo(cordenadas):
                 self.verificarEstado()
             
@@ -35,7 +40,7 @@ class Objetivo(IA):
         if (self.getAgente().getX() == self.yItemProximo) and (self.getAgente().getY() == self.xItemProximo):
             return True
         
-    def percepcaoProximidade(self, cordenadas) -> str:
+    def percepcaoProximidade(self, cordenadas: dict) -> str:
         """
         Verifica qual o item mais próximo da posição do agente
         """
@@ -50,3 +55,6 @@ class Objetivo(IA):
                 itemProximo = distancia
         
         return itemProximo
+    
+    def getProximoAlvo(self) -> list:
+        return self.proximoAlvo

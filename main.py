@@ -11,7 +11,7 @@ agente = ag.Agente()
 mapa = map.Mapa()
 ui = UI.UI()
 
-arquitetura = 'simples'
+arquitetura = 'objetivo'
 
 if arquitetura == 'simples':
     ia = iasimples.Simples(agente)
@@ -19,8 +19,10 @@ elif arquitetura == 'modelo':
     ia = iamodelo.Modelo(agente)
 elif arquitetura == 'objetivo':
     ia = iaobjetivo.Objetivo(agente)
-else:  
+elif arquitetura == 'utilidade':  
     ia = iautilidade.Utilidade(agente)
+else:
+    pass
 
 aplicativo = app.App(ia, mapa, ui)
 

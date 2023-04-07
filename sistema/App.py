@@ -1,7 +1,11 @@
 from time import sleep
+from arquiteturas.IA import IA
+from arquiteturas.Utilidade import Utilidade
+from arquiteturas.Objetivo import Objetivo
+from interface.UI import UI
 
 class App:
-    def __init__(self, arquiteturaIA, mapa, UI) -> None:
+    def __init__(self, arquiteturaIA: IA, mapa: str, UI: UI) -> None:
         self.arquiteturaIA = arquiteturaIA
         self.agente = arquiteturaIA.getAgente()
         self.mapa = mapa
@@ -15,14 +19,10 @@ class App:
         
         while(True):
             # Intervalo entre cada loop
-            sleep(.10)
+            sleep(.05)
             print("\x1b[2J")
             # Volta para a posição inicial do scroll 
             print("\x1b[0;0f")
-            
-            if len(self.arquiteturaIA.getItensColetados()) == 10:
-                self.UI.fim(self.loopAtual)
-                input()
             
             # Atualizar a nova localização dos objetos no dicionario
             self.mapa.atualizarCordenadas(self.agente)
@@ -33,6 +33,10 @@ class App:
             # Renderizar o mapa com os objetos
             self.UI.renderizar(self.mapa.desenhar())
             
+            if len(self.arquiteturaIA.getItensColetados()) == 15:
+                self.UI.fim(self.loopAtual)
+                input()
+            
             # Verificar sensores e executar ações do agente
             self.atualizarIA()
             
@@ -41,7 +45,7 @@ class App:
         Carrega as configurações iniciais do mapa
         """
         # Gerando instâncias e calculando cordenadas para lixos orgânicos
-        self.mapa.gerarItens(5, 1)
+        self.mapa.gerarItens(10, 1)
         # Gerando instâncias e calculando cordenadas para lixos recicláveis
         self.mapa.gerarItens(5, 5)
         # Calculando cordenadas para para o lixo
@@ -55,7 +59,7 @@ class App:
         """
         self.loopAtual = self.loopAtual + 1
     
-    def atualizarMensagem(self, mensagem) -> None:
+    def atualizarMensagem(self, mensagem: str) -> None:
         """
         Atualiza a mensagem provocada por algum evento na UI
         """
@@ -66,40 +70,20 @@ class App:
         Atualiza a mensagem com informações do programa na UI
         """
         self.atualizarLoopAtual()
-        self.UI.atualizarCabecalhoMensagem(self.loopAtual, self.agente.getY(), self.agente.getX(), len(self.arquiteturaIA.getItensColetados()))
+        if isinstance(self.arquiteturaIA, Utilidade) or isinstance(self.arquiteturaIA, Objetivo):
+            self.UI.atualizarCabecalhoMensagem(self.loopAtual, 
+                                               self.agente.getY(), 
+                                               self.agente.getX(), 
+                                               len(self.arquiteturaIA.getItensReciclaveis()), 
+                                               len(self.arquiteturaIA.getItensOrganicos()), 
+                                               self.arquiteturaIA.getProximoAlvo())
+        else:
+            self.UI.atualizarCabecalhoMensagem(self.loopAtual, 
+                                               self.agente.getY(), 
+                                               self.agente.getX(), 
+                                               len(self.arquiteturaIA.getItensReciclaveis()), 
+                                               len(self.arquiteturaIA.getItensOrganicos()), 
+                                               None)
         
     def atualizarIA(self) -> None:
         self.arquiteturaIA.executar(self.mapa.getCordenadas(), self.mapa.getItens())
-        self.atualizarPercepcoes()
-        
-        #print(self.agente.getEstado())
-        #print(f"Agente X: {self.arquiteturaIA.getAgente().getX()}\nAgente Y: {self.arquiteturaIA.getAgente().getY()}\n\nItem X: {self.yItemProximo}\nItem Y: {self.xItemProximo}")
-        
-    def atualizarPercepcoes(self):
-        """
-        # Recupera as cordenadas do agente após o deslocamento
-        x = self.arquiteturaIA.getAgente().getX()
-        y = self.arquiteturaIA.getAgente().getY()
-         
-        # Percepção de objetos interativos no mapa (Coleta através do método 'percepcaoCordenadas')
-        # encontrouObjeto = self.arquiteturaIA.percepcaoCordenadas(self.mapa.getCordenadas())
-        
-        #if (self.arquiteturaIA.getAgente().getX() == self.yItemProximo and self.arquiteturaIA.getAgente().getY() == self.xItemProximo) or (self.arquiteturaIA.getAgente().getX() == 19 and self.arquiteturaIA.getAgente().getY() == 19):
-                #self.arquiteturaIA.percepcaoCordenadas(self.mapa.getCordenadas(), self.mapa.getItens())
-    
-        # Percepção de limites do mapa
-        #ultrapassouLimite = self.arquiteturaIA.percepcaoLimitesDoMapa(x, y)
-        
-        # Condicional para atualizar a mensagem que será apresentada na UI
-        #if(encontrouObjeto):
-            #self.arquiteturaIA.verificarItem(self.localizacaoObjetosInterativos)
-        #    self.atualizarMensagem(f"Objeto encontrado em ({y}, {x}).")
-        
-        # Condicional para atualizar a mensagem que será apresentada na UI
-        if(ultrapassouLimite):
-            # Recupera as cordenadas anteriores do agente
-            xAnterior = self.arquiteturaIA.getXAnterior()
-            yAnterior = self.arquiteturaIA.getYAnterior()
-            
-            self.atualizarMensagem(f"Limite do mapa ultrapassado em ({y}, {x}), retornando para ({yAnterior}, {xAnterior}).")
-        """
