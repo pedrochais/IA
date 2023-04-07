@@ -5,7 +5,6 @@ from entidades.Agente import Agente
 
 class Mapa:
     def __init__(self) -> None:
-        
         # Inicializando cordenadas do lixo
         self.xLixo = 0
         self.yLixo = 0
@@ -35,14 +34,16 @@ class Mapa:
         """
         Verifica se a cordenada está disponível para ser ocupada
         """
-        
         while (True):
             cordenadaDisponivel = True
 
-            for indice, cordenada in enumerate(self.cordenadas.values()):
-                if (x == cordenada[0] and y == cordenada[1]):
+            for cordenada in enumerate(self.cordenadas.values()):
+                if (x == cordenada[1][0] and y == cordenada[1][1]):
                     cordenadaDisponivel = False
                     break
+                
+            if (x == 19 and y == 19) or (x == 0 and y == 0):
+                cordenadaDisponivel = False
 
             if (cordenadaDisponivel):
                 return True
@@ -60,15 +61,16 @@ class Mapa:
                 # Calcular cordenadas
                 x = random.randint(0, 19)
                 y = random.randint(0, 19)
-
+    
                 # Validar cordenadas
                 cordenadaDisponivel = self.verificarCordenada(x, y)
-
+                
                 if (cordenadaDisponivel == False):
-                    self.atualizarMensagem(f"Cordenada indisponível em ({x}, {y}).")
+                    #self.atualizarMensagem(f"Cordenada indisponível em ({x}, {y}).")
                     continue
                 else:
                     # Cria uma nova instancia de um item e adiciona à lista de itens
+                    self.cordenadas[f"item_{indiceItem}"] = [x, y]
                     self.itens.append(item.Item(f"item_{indiceItem}", x, y, peso))
                     break
 

@@ -14,15 +14,27 @@ class App:
         # Inicializando variável de controle para contabilizar os loops do programa
         self.loopAtual = 0
         
+        # Limpar terminal a cada quantidade x de loops
+        self.intervalo = 40
+        
+        # Intervalo de tempo entre cada loop
+        self.intervaloTempo = 0#.05
+        
     def loop(self) -> None:
+        """
+        Realiza a chamada de métodos a cada loop da aplicação
+        """
         self.configuracoesIniciais()
         
         while(True):
             # Intervalo entre cada loop
-            sleep(.05)
-            print("\x1b[2J")
+            sleep(self.intervaloTempo)
+            
+            # Faz a limpeza do terminal a cada x loops para retirar caracteres que não estão mais sendo usados
+            self.UI.limparTerminal(self.loopAtual, self.intervalo)
+            
             # Volta para a posição inicial do scroll 
-            print("\x1b[0;0f")
+            self.UI.retornarTopoScroll()
             
             # Atualizar a nova localização dos objetos no dicionario
             self.mapa.atualizarCordenadas(self.agente)
@@ -33,12 +45,11 @@ class App:
             # Renderizar o mapa com os objetos
             self.UI.renderizar(self.mapa.desenhar())
             
-            if len(self.arquiteturaIA.getItensColetados()) == 15:
-                self.UI.fim(self.loopAtual)
-                input()
+            # Chamada para pausar loop ao satisfazer a condição de término
+            self.verificarTermino()
             
             # Verificar sensores e executar ações do agente
-            self.atualizarIA()
+            self.atualizarIA()  
             
     def configuracoesIniciais(self) -> None:
         """
@@ -87,3 +98,8 @@ class App:
         
     def atualizarIA(self) -> None:
         self.arquiteturaIA.executar(self.mapa.getCordenadas(), self.mapa.getItens())
+        
+    def verificarTermino(self) -> None:
+        if len(self.arquiteturaIA.getItensColetados()) == 15:
+            self.UI.fim(self.loopAtual)
+            input()

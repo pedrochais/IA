@@ -11,7 +11,7 @@ agente = ag.Agente()
 mapa = map.Mapa()
 ui = UI.UI()
 
-arquitetura = 'objetivo'
+arquitetura = 'utilidade'
 
 if arquitetura == 'simples':
     ia = iasimples.Simples(agente)

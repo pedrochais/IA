@@ -18,8 +18,8 @@ class UI:
         print(self.cabecalhoMensagem)
         # Mensagem disparada por evento
         print(self.mensagem)
-        # Desenho do mapa
         print("╭────────────────────────────╯•╰────────────────────────────╮")
+        # Desenho do mapa
         print(mapa, end="")
         print("╰────────────────────────────╮•╭────────────────────────────╯")
         
@@ -45,3 +45,10 @@ class UI:
         
     def fim(self, loopAtual: int) -> None:
         print(f"[{loopAtual}] Todos os itens foram coletados!")
+        
+    def limparTerminal(self, loopAtual, intervalo) -> None:
+        if loopAtual % intervalo == 0:
+            print("\x1b[2J")
+            
+    def retornarTopoScroll(self) -> None:
+        print("\x1b[0;0f")
