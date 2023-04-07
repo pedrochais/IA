@@ -3,7 +3,7 @@ import entidades.Item as item
 import copy
 
 class Mapa:
-    def __init__(self):
+    def __init__(self) -> None:
         
         # Inicializando cordenadas do lixo
         self.xLixo = 0
@@ -14,27 +14,8 @@ class Mapa:
 
         # Inicializando dicionário para armazenar instâncias de itens
         self.itens = []
-        
-        
-    # GETTERS
-     
-    def getItens(self):
-        return self.itens
     
-    def getCordenadas(self):
-        return self.cordenadas
-        
-    # SETTERS        
-
-    def setCordenadasLixo(self, x, y):
-        self.xLixo = x
-        self.yLixo = y
-        
-    def setCordenadasAgente(self, agente, x, y):
-        agente.setX(x)
-        agente.setY(y)
-    
-    def atualizarCordenadas(self, agente):
+    def atualizarCordenadas(self, agente) -> None:
         """
         Atualiza as cordenadas de todos os objetos no dicionário
         """
@@ -47,9 +28,9 @@ class Mapa:
 
         # Atualiza as cordenadas de cada item da lista
         for item in self.itens:
-            self.cordenadas[f"{item.getRotulo()}"] = [item.getY(), item.getX()]
+            self.cordenadas[f"{item.getRotulo()}"] = [item.getY(), item.getX(), item.getPeso()]
     
-    def verificarCordenada(self, x, y):
+    def verificarCordenada(self, x, y) -> bool:
         """
         Verifica se a cordenada está disponível para ser ocupada
         """
@@ -67,7 +48,7 @@ class Mapa:
             else:
                 return False
 
-    def gerarItens(self, quantidade, peso):
+    def gerarItens(self, quantidade, peso) -> None:
         """
         Cria n itens com um determinado peso em cordenadas aleatórias
         """
@@ -90,7 +71,7 @@ class Mapa:
                     self.itens.append(item.Item(f"item_{indiceItem}", x, y, peso))
                     break
 
-    def desenhar(self):
+    def desenhar(self) -> str:
         """
         Função para gerar o mapa com os objetos nas localizações especificadas
         """
@@ -103,7 +84,7 @@ class Mapa:
         for x in range(20):
             for y in range(20):
                 objetoEncontrado = False
-                simbolo = '[ ]'
+                simbolo = '   '
                 # Percorre o dicionário temporário de cordenadas ocupadas
                 for chave in objetos:
                     # Verifica se as cordenadas da iteração atual correspondem às cordenadas do objeto
@@ -114,7 +95,8 @@ class Mapa:
                         if (chave == 'agente'):  # Verifica se é tipo agente
                             simbolo = '[A]'
                         elif ('item' in chave):  # Verifica se é tipo item
-                            simbolo = '[*]'
+                            peso = objetos[chave][2]
+                            simbolo = f'[{peso}]'
                         elif (chave == 'lixo'):  # Verifica se é tipo lixo
                             simbolo = '[L]'
 
@@ -127,3 +109,21 @@ class Mapa:
             mapa = mapa + '\n'
         # Retorna o desenho do mapa
         return mapa
+
+    # GETTERS
+     
+    def getItens(self) -> list:
+        return self.itens
+    
+    def getCordenadas(self) -> dict:
+        return self.cordenadas
+        
+    # SETTERS        
+
+    def setCordenadasLixo(self, x, y) -> None:
+        self.xLixo = x
+        self.yLixo = y
+        
+    def setCordenadasAgente(self, agente, x, y) -> None:
+        agente.setX(x)
+        agente.setY(y)

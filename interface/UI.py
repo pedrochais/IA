@@ -1,9 +1,9 @@
 class UI:
-    def __init__(self):
+    def __init__(self) -> None:
         self.cabecalhoMensagem = ''
         self.mensagem = ''
 
-    def renderizar(self, mapa):
+    def renderizar(self, mapa) -> None:
         """
         Renderizar os componentes gráficos na tela
         """
@@ -14,11 +14,11 @@ class UI:
         # Desenho do mapa
         print(mapa, end="")
         
-    def atualizarCabecalhoMensagem(self, loopAtual, xAtualAgente, yAtualAgente, itensColetados):
+    def atualizarCabecalhoMensagem(self, loopAtual, xAtualAgente, yAtualAgente, itensColetados) -> None:
         self.cabecalhoMensagem = f'Loop: {loopAtual} | Agente: ({xAtualAgente}, {yAtualAgente}) | Itens coletados: {itensColetados}'
 
-    def atualizarMensagem(self, loopAtual, mensagem):
+    def atualizarMensagem(self, loopAtual, mensagem) -> None:
         self.mensagem = f'[{loopAtual}] {mensagem}'
         
-    def fim(self, loopAtual):
+    def fim(self, loopAtual) -> None:
         print(f"[{loopAtual}] Todos os itens foram coletados!")
